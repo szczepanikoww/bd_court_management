@@ -3,7 +3,7 @@
 ## 1. Cel i środowisko testowe
 Celem scenariuszy testowych jest weryfikacja poprawności przyjętego modelu danych, skuteczności narzuconych więzów (constraints) i prawidłowego funkcjonowania logiki ukrytej w triggerach po stronie bazy PostgreSQL. 
 *   **Środowisko wykonawcze:** psql / pgAdmin / DBeaver
-*   **Zestaw testowy:** Baza zasilana danymi testowymi wygenerowanymi przez skrypt `sql/dml/01_seed_data.sql` lub za pomocą komendy `python src/db_manager.py --seed`.
+*   **Zestaw testowy:** Baza zasilana danymi testowymi wygenerowanymi przez skrypt `sql/dml/01_seed_data.sql`.
 
 ---
 

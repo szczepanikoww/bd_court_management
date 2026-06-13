@@ -4,7 +4,6 @@
 *   **System Zarządzania Bazą Danych (RDBMS):** PostgreSQL (zalecana wersja 14+)
 *   **Interfejsy i Narzędzia (GUI):** pgAdmin 4 / DBeaver / DataGrip / psql CLI
 *   **Kod bazy danych:** Czysty SQL poszerzony o zagnieżdżony język proceduralny PL/pgSQL wykorzystywany do tworzenia funkcji i wyzwalaczy (triggerów).
-*   **Skrypty pomocnicze:** Język Python (plik `db_manager.py`) używany do zautomatyzowania budowy struktury i seeding'u bazy danych.
 
 ## 2. Architektura Schematu (Schema `public`)
 Projekt wykorzystuje standardowy, pojedynczy schemat relacyjny do przechowywania wszystkich encji. Tabele zostały podzielone na słownikowe (statyczne) oraz operacyjne (transakcyjne).

@@ -37,9 +37,9 @@ projekt_bazy/
 │   │   └── 01_seed_data.sql   # Dane testowe (seed) do zasilenia bazy
 │   └── queries/               # Zapytania testowe i raportowe
 │       └── reports.sql        # Przykładowe zapytania analityczne i raporty
-├── src/                       # Skrypty narzędziowe i aplikacja testowa
-│   ├── db_manager.py          # Pythonowy skrypt do automatycznej inicjalizacji i zarządzania bazą
-│   └── requirements.txt       # Zależności Pythona
+├── tests/                     # Skrypty testowe
+│   └── test_database.py       # Testy jednostkowe bazy danych (pytest)
+├── requirements.txt           # Zależności Pythona
 └── README.md                  # Główne informacje o projekcie
 ```
 
@@ -66,30 +66,6 @@ psql -U postgres -d rezerwacje_kortow -f sql/ddl/04_triggers.sql
 # 3. Zasilenie bazy danymi testowymi
 psql -U postgres -d rezerwacje_kortow -f sql/dml/01_seed_data.sql
 ```
-
-### Uruchomienie automatyczne (Python)
-W katalogu `src/` znajduje się skrypt `db_manager.py`, który potrafi automatycznie utworzyć strukturę bazy, wczytać dane oraz uruchomić raporty.
-
-1. Przejdź do katalogu projektu:
-   ```bash
-   cd projekt_bazy
-   ```
-2. Zainstaluj zależności:
-   ```bash
-   pip install -r src/requirements.txt
-   ```
-3. Skonfiguruj zmienne środowiskowe w pliku `.env` (lub przekaż jako zmienne systemowe):
-   ```env
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_NAME=rezerwacje_kortow
-   DB_USER=postgres
-   DB_PASSWORD=twoje_haslo
-   ```
-4. Uruchom skrypt:
-   ```bash
-   python src/db_manager.py --init --seed --report
-   ```
 
 ---
 
