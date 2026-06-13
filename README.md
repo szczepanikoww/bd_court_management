@@ -7,9 +7,11 @@ Projekt bazy danych dla systemu rezerwacji kortów sportowych, obejmujący zarz�
 System umożliwia:
 - Rejestrację i zarządzanie kontami użytkowników (klienci, pracownicy, administratorzy).
 - Ewidencjonowanie kortów sportowych (różne dyscypliny, typy nawierzchni, obiekty kryte/otwarte).
-- Rezerwowanie kortów w określonych przedziałach czasowych z automatycznym sprawdzaniem kolizji terminów.
-- Rejestrowanie płatności powiązanych z rezerwacjami (obsługa różnych metod i statusów płatności).
+- Rezerwowanie kortów w określonych przedziałach czasowych z automatycznym sprawdzaniem kolizji terminów (ochrona przed overbookingiem).
+- Automatyczne wyliczanie całkowitych kosztów rezerwacji na podstawie cennika kortu i czasu wynajmu.
+- Rejestrowanie płatności powiązanych z rezerwacjami z systemem reaktywnej aktualizacji statusu rezerwacji.
 - Zbieranie opinii użytkowników po zrealizowanych rezerwacjach.
+- Systemową ochronę danych historycznych i dowodowych przed modyfikacjami po odbyciu się rezerwacji.
 - Generowanie zaawansowanych raportów i statystyk (wykorzystanie obiektów, przychody, popularność dyscyplin).
 
 ---
@@ -20,9 +22,12 @@ Poniższa struktura została zaprojektowana w celu czytelnego podziału skryptó
 
 ```text
 projekt_bazy/
-├── docs/                      # Dokumentacja projektowa
-│   └── db_design.md           # Model konceptualny/logiczny, słownik danych, ERD
-├── sql/                       # Skrypty SQL
+├── docs/                          # Pełna dokumentacja projektowa
+│   ├── analiza_wymagan.md         # Wymagania biznesowe i opis aktorów
+│   ├── db_design.md               # Model konceptualny/logiczny, słownik danych, ERD
+│   ├── dokumentacja_techniczna.md # Relacje, constraints, triggery i indeksy
+│   └── raport_z_testow.md         # Przypadki testowe i weryfikacja integralności
+├── sql/                           # Skrypty SQL
 │   ├── ddl/                   # Skrypty DDL (Definicja struktur)
 │   │   ├── 01_tables.sql      # Tworzenie tabel i więzów integralności
 │   │   ├── 02_views.sql       # Definicje widoków (statystyki i raporty)
