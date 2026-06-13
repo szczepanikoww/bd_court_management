@@ -1,12 +1,8 @@
--- Skrypt DDL: Widoki analityczne i raportowe (3NF)
--- Baza danych: PostgreSQL
-
 DROP VIEW IF EXISTS v_statystyki_klientow CASCADE;
 DROP VIEW IF EXISTS v_przychody_miesieczne CASCADE;
 DROP VIEW IF EXISTS v_oblozenie_kortow CASCADE;
 DROP VIEW IF EXISTS v_szczegoly_rezerwacji CASCADE;
 
--- 1. Widok ze szczegółami rezerwacji
 CREATE VIEW v_szczegoly_rezerwacji AS
 SELECT 
     r.id_rezerwacji,
@@ -35,7 +31,6 @@ JOIN nawierzchnie n ON k.id_nawierzchni = n.id_nawierzchni
 LEFT JOIN platnosci p ON r.id_rezerwacji = p.id_rezerwacji
 LEFT JOIN opinie o ON r.id_rezerwacji = o.id_rezerwacji;
 
--- 2. Widok obłożenia i popularności kortów
 CREATE VIEW v_oblozenie_kortow AS
 SELECT 
     k.id_kortu,
@@ -51,7 +46,6 @@ LEFT JOIN rezerwacje r ON k.id_kortu = r.id_kortu AND r.status_rezerwacji IN ('p
 LEFT JOIN opinie o ON r.id_rezerwacji = o.id_rezerwacji
 GROUP BY k.id_kortu, k.nazwa, d.nazwa_sportu, k.cena_za_godzine;
 
--- 3. Widok miesięcznego podsumowania finansowego
 CREATE VIEW v_przychody_miesieczne AS
 SELECT 
     EXTRACT(YEAR FROM COALESCE(p.data_platnosci, r.data_rozpoczecia))::INTEGER AS rok,
@@ -67,7 +61,6 @@ GROUP BY
     EXTRACT(YEAR FROM COALESCE(p.data_platnosci, r.data_rozpoczecia)), 
     EXTRACT(MONTH FROM COALESCE(p.data_platnosci, r.data_rozpoczecia));
 
--- 4. Widok statystyk klientów (Ranking)
 CREATE VIEW v_statystyki_klientow AS
 SELECT 
     u.id_uzytkownika,

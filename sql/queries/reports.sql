@@ -1,11 +1,3 @@
--- Skrypt SQL: Zapytania analityczne i raportowe
--- Baza danych: PostgreSQL
-
--- ============================================================================
--- 1. Raport obłożenia (wykorzystania) kortów w ujęciu procentowym
--- Założenie: Korty są czynne codziennie w godzinach 08:00 - 22:00 (14 godzin/dobę).
--- Miesięczna pojemność (dla czerwca 2026 = 30 dni) wynosi: 30 * 14 = 420 godzin.
--- ============================================================================
 SELECT 
     id_kortu,
     nazwa,
@@ -17,11 +9,6 @@ SELECT
 FROM v_oblozenie_kortow
 ORDER BY wskaznik_oblozenia_procent DESC;
 
-
--- ============================================================================
--- 2. Zestawienie finansowe: przychody rzeczywiste vs oczekujące
--- Wykorzystuje widok v_przychody_miesieczne do podsumowania finansów.
--- ============================================================================
 SELECT 
     rok,
     miesiac,
@@ -32,11 +19,6 @@ SELECT
 FROM v_przychody_miesieczne
 ORDER BY rok DESC, miesiac DESC;
 
-
--- ============================================================================
--- 3. Ranking najbardziej dochodowych dyscyplin sportowych
--- Zliczanie łącznych przychodów oraz średniej ceny za godzinę według typu sportu.
--- ============================================================================
 SELECT 
     k.typ_sportu,
     COUNT(r.id_rezerwacji) AS liczba_rezerwacji,
@@ -49,12 +31,6 @@ WHERE p.status_platnosci = 'zrealizowana'
 GROUP BY k.typ_sportu
 ORDER BY total_przychod_pln DESC;
 
-
--- ============================================================================
--- 4. Ranking lojalnościowy klientów (Window Functions)
--- Pokazuje łączną kwotę wydaną przez każdego klienta oraz ich pozycję w rankingu
--- na podstawie sumy wydatków.
--- ============================================================================
 SELECT 
     id_uzytkownika,
     klient,
@@ -67,11 +43,6 @@ FROM v_statystyki_klientow
 WHERE suma_rezerwacji > 0
 ORDER BY wydano_lacznie_pln DESC;
 
-
--- ============================================================================
--- 5. Analiza ocen i opinii dla poszczególnych obiektów
--- Wyświetla średnie oceny kortów wraz z liczbą opinii i komentarzami.
--- ============================================================================
 SELECT 
     k.nazwa AS nazwa_kortu,
     k.typ_sportu,
@@ -84,10 +55,6 @@ LEFT JOIN opinie o ON r.id_rezerwacji = o.id_rezerwacji
 GROUP BY k.id_kortu, k.nazwa, k.typ_sportu
 ORDER BY srednia_ocena DESC NULLS LAST;
 
-
--- ============================================================================
--- 6. Zapytanie sprawdzające kolizje (podgląd nakładania się terminów dla Kortu 1)
--- ============================================================================
 SELECT 
     id_rezerwacji,
     klient,

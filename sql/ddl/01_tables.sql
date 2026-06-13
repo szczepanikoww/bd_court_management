@@ -1,7 +1,3 @@
--- Skrypt DDL: Tworzenie tabel i ograniczeń (Zgodność z 3NF)
--- Baza danych: PostgreSQL
-
--- Usunięcie istniejących tabel w celu czystej reinstalacji
 DROP TABLE IF EXISTS opinie CASCADE;
 DROP TABLE IF EXISTS platnosci CASCADE;
 DROP TABLE IF EXISTS rezerwacje CASCADE;
@@ -11,37 +7,25 @@ DROP TABLE IF EXISTS role_uzytkownikow CASCADE;
 DROP TABLE IF EXISTS dyscypliny CASCADE;
 DROP TABLE IF EXISTS nawierzchnie CASCADE;
 
--- ============================================================================
--- SŁOWNIKI (Dla zapewnienia 3NF)
--- ============================================================================
-
--- 1. Słownik ról użytkowników (zapobiega redundancji i ułatwia rozbudowę uprawnień)
 CREATE TABLE role_uzytkownikow (
     id_roli SERIAL PRIMARY KEY,
-    kod_roli VARCHAR(20) NOT NULL UNIQUE, -- np. 'klient', 'pracownik', 'admin'
+    kod_roli VARCHAR(20) NOT NULL UNIQUE,
     nazwa_roli VARCHAR(50) NOT NULL,
     opis TEXT
 );
 
--- 2. Słownik dyscyplin sportowych
 CREATE TABLE dyscypliny (
     id_dyscypliny SERIAL PRIMARY KEY,
-    nazwa_sportu VARCHAR(50) NOT NULL UNIQUE, -- np. 'tenis', 'squash'
+    nazwa_sportu VARCHAR(50) NOT NULL UNIQUE,
     opis_sportu TEXT
 );
 
--- 3. Słownik typów nawierzchni
 CREATE TABLE nawierzchnie (
     id_nawierzchni SERIAL PRIMARY KEY,
-    nazwa_nawierzchni VARCHAR(50) NOT NULL UNIQUE, -- np. 'maczka', 'trawa'
+    nazwa_nawierzchni VARCHAR(50) NOT NULL UNIQUE,
     czy_wymaga_obuwia_halowego BOOLEAN NOT NULL DEFAULT FALSE
 );
 
--- ============================================================================
--- TABELE GŁÓWNE
--- ============================================================================
-
--- 4. Tabela Uzytkownicy (w relacji z rolami)
 CREATE TABLE uzytkownicy (
     id_uzytkownika SERIAL PRIMARY KEY,
     imie VARCHAR(50) NOT NULL,
@@ -55,7 +39,6 @@ CREATE TABLE uzytkownicy (
         REFERENCES role_uzytkownikow(id_roli) ON DELETE RESTRICT
 );
 
--- 5. Tabela Korty (w relacji ze słownikami dyscyplin i nawierzchni)
 CREATE TABLE korty (
     id_kortu SERIAL PRIMARY KEY,
     nazwa VARCHAR(100) NOT NULL,
@@ -72,7 +55,6 @@ CREATE TABLE korty (
         REFERENCES nawierzchnie(id_nawierzchni) ON DELETE RESTRICT
 );
 
--- 6. Tabela Rezerwacje
 CREATE TABLE rezerwacje (
     id_rezerwacji SERIAL PRIMARY KEY,
     id_uzytkownika INTEGER NOT NULL,
@@ -93,7 +75,6 @@ CREATE TABLE rezerwacje (
     CONSTRAINT chk_cena_calkowita CHECK (cena_calkowita >= 0)
 );
 
--- 7. Tabela Platnosci
 CREATE TABLE platnosci (
     id_platnosci SERIAL PRIMARY KEY,
     id_rezerwacji INTEGER NOT NULL UNIQUE,
@@ -110,7 +91,6 @@ CREATE TABLE platnosci (
     CONSTRAINT chk_status_platnosci CHECK (status_platnosci IN ('oczekujaca', 'zrealizowana', 'odrzucona', 'zwrocona'))
 );
 
--- 8. Tabela Opinie
 CREATE TABLE opinie (
     id_opinii SERIAL PRIMARY KEY,
     id_rezerwacji INTEGER NOT NULL UNIQUE,
@@ -124,7 +104,6 @@ CREATE TABLE opinie (
     CONSTRAINT chk_ocena CHECK (ocena BETWEEN 1 AND 5)
 );
 
--- Indeksy dla optymalizacji zapytań
 CREATE INDEX idx_rezerwacje_daty ON rezerwacje (data_rozpoczecia, data_zakonczenia);
 CREATE INDEX idx_rezerwacje_kort ON rezerwacje (id_kortu);
 CREATE INDEX idx_rezerwacje_uzytkownik ON rezerwacje (id_uzytkownika);
