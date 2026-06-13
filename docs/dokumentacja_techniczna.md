@@ -62,3 +62,38 @@ Zastosowano standardowe struktury B-Tree do ułatwienia skanowania dużej ilośc
 *   Klucze główne (`PRIMARY KEY`) domyślnie posiadają wbudowane indeksy w Postgres.
 *   Utworzono dodatkowe indeksy na kluczach obcych (`idx_rezerwacje_uzytkownik`, `idx_rezerwacje_kort`) – rozwiązuje to problem tzw. 'Full Table Scan' przy usuwaniu kaskadowym użytkowników czy kortów.
 *   Utworzono indeks kompozytowy `idx_rezerwacje_daty` na parze `(data_rozpoczecia, data_zakonczenia)`, z uwagi na to, że warunek weryfikujący nakładanie się czasów z triggera nr 1 byłby wąskim gardłem bazy danych bez szybkiego dostępu do drzewa dat.
+
+## 7. Najczęstsze Przypadki Użycia (Database Use Cases)
+
+Ten dział obrazuje bezpośrednie interakcje, w których silnik bazy danych przejmuje odpowiedzialność za logikę i dba o stan całego systemu, odpowiadając na żądania SQL płynące z aplikacji klienckiej.
+
+**Use Case 1: Rezerwacja terminu, który jest już zajęty (Overbooking)**
+*   **Akcja:** Aplikacja kliencka próbuje zarezerwować Kort nr 1, podczas gdy inna osoba posiada już na nim zapisaną w bazie rezerwację nachodzącą na ten sam czas.
+*   **Zapytanie SQL płynące do bazy:**
+    ```sql
+    INSERT INTO rezerwacje (id_uzytkownika, id_kortu, data_rozpoczecia, data_zakonczenia)
+    VALUES (2, 1, '2025-06-01 11:00:00', '2025-06-01 13:00:00');
+    ```
+*   **Reakcja Bazy Danych:** Zanim dane zostaną zapisane, uruchamia się wyzwalacz `trg_rezerwacje_terminy`. Analizuje on ramy czasowe, natrafia na kolizję i przerywa całą transakcję.
+*   **Odpowiedź Systemu (Wynik):**
+    `ERROR: Błąd rezerwacji: Kort o ID 1 jest już zajęty w godzinach od 2025-06-01 11:00:00 do 2025-06-01 13:00:00.`
+
+**Use Case 2: Zmiana statusu rezerwacji po dokonaniu płatności**
+*   **Akcja:** Operator płatności (np. BLIK) potwierdza zaksięgowanie wpłaty. Aplikacja aktualizuje więc status transakcji w tabeli księgowej.
+*   **Zapytanie SQL płynące do bazy:**
+    ```sql
+    UPDATE platnosci SET status_platnosci = 'zrealizowana' WHERE id_rezerwacji = 15;
+    ```
+*   **Reakcja Bazy Danych:** Silnik bazy łapie zmianę statusu z tabeli `platnosci` za pomocą `trg_platnosci_rezerwacje` i samodzielnie rzutuje to zachowanie na powiązaną relacją tabelę `rezerwacje`.
+*   **Odpowiedź Systemu (Wynik):** Tabela płatności zostaje zaktualizowana, a w tym samym ułamku sekundy powiązana rezerwacja w tabeli `rezerwacje` zmienia samoczynnie swój status z 'oczekujaca' na 'potwierdzona'. Backend nie musiał wysyłać żadnego dodatkowego zapytania `UPDATE rezerwacje...`.
+
+**Use Case 3: Zabezpieczenie przed wprowadzaniem błędnych wartości czasowych**
+*   **Akcja:** Użytkownik lub błąd we frontendzie doprowadza do sytuacji, w której czas zakończenia rezerwacji jest wcześniejszy niż czas rozpoczęcia (podróż w czasie).
+*   **Zapytanie SQL płynące do bazy:**
+    ```sql
+    INSERT INTO rezerwacje (id_uzytkownika, id_kortu, data_rozpoczecia, data_zakonczenia)
+    VALUES (1, 1, '2025-06-20 18:00:00', '2025-06-20 16:00:00');
+    ```
+*   **Reakcja Bazy Danych:** Zapytanie rozbija się bezpośrednio o reguły definicji struktury DDL bazy. Wbudowany `CONSTRAINT chk_daty CHECK (data_zakonczenia > data_rozpoczecia)` natychmiast odrzuca taką możliwość chroniąc integralność systemu.
+*   **Odpowiedź Systemu (Wynik):**
+    `ERROR: new row for relation "rezerwacje" violates check constraint "chk_daty"`
