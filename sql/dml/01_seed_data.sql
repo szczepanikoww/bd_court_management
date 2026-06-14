@@ -1,16 +1,9 @@
-TRUNCATE TABLE opinie, platnosci, rezerwacje, korty, uzytkownicy, role_uzytkownikow, dyscypliny, nawierzchnie RESTART IDENTITY CASCADE;
+TRUNCATE TABLE opinie, platnosci, rezerwacje, korty, uzytkownicy, role_uzytkownikow, nawierzchnie RESTART IDENTITY CASCADE;
 
 INSERT INTO role_uzytkownikow (kod_roli, nazwa_roli, opis) VALUES
 ('klient', 'Klient', 'Standardowy użytkownik mogący dokonywać rezerwacji kortów'),
 ('pracownik', 'Pracownik Obsługi', 'Użytkownik obsługujący rezerwacje i płatności na miejscu'),
 ('administrator', 'Administrator Systemu', 'Użytkownik z pełnymi uprawnieniami konfiguracyjnymi');
-
-INSERT INTO dyscypliny (nazwa_sportu, opis_sportu) VALUES
-('tenis', 'Tenis ziemny - gra pojedyncza lub podwójna'),
-('squash', 'Squash - dynamiczna gra halowa'),
-('badminton', 'Badminton - gra rekreacyjna i sportowa'),
-('koszykowka', 'Koszykówka - gra zespołowa na twardym boisku'),
-('siatkowka', 'Siatkówka halowa lub plażowa');
 
 INSERT INTO nawierzchnie (nazwa_nawierzchni, czy_wymaga_obuwia_halowego) VALUES
 ('maczka', FALSE),
@@ -26,14 +19,14 @@ INSERT INTO uzytkownicy (imie, nazwisko, email, telefon, id_roli, data_rejestrac
 ('Tomasz', 'Lewandowski', 'tomasz.lewandowski@korty.pl', '500100200', (SELECT id_roli FROM role_uzytkownikow WHERE kod_roli = 'pracownik'), '2026-01-01 08:00:00'),
 ('Maria', 'Dabrowska', 'maria.dabrowska@korty.pl', '600200300', (SELECT id_roli FROM role_uzytkownikow WHERE kod_roli = 'administrator'), '2026-01-01 08:00:00');
 
-INSERT INTO korty (nazwa, id_dyscypliny, id_nawierzchni, czy_zadaszony, cena_za_godzine, czy_aktywny) VALUES
-('Kort A (Centralny)', (SELECT id_dyscypliny FROM dyscypliny WHERE nazwa_sportu = 'tenis'), (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'maczka'), FALSE, 60.00, TRUE),
-('Kort B (Boczny)', (SELECT id_dyscypliny FROM dyscypliny WHERE nazwa_sportu = 'tenis'), (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'trawa'), FALSE, 50.00, TRUE),
-('Hala Squash 1', (SELECT id_dyscypliny FROM dyscypliny WHERE nazwa_sportu = 'squash'), (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'parkiet'), TRUE, 45.00, TRUE),
-('Hala Squash 2', (SELECT id_dyscypliny FROM dyscypliny WHERE nazwa_sportu = 'squash'), (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'parkiet'), TRUE, 45.00, TRUE),
-('Kort Badminton 1', (SELECT id_dyscypliny FROM dyscypliny WHERE nazwa_sportu = 'badminton'), (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'parkiet'), TRUE, 35.00, TRUE),
-('Kort Badminton 2', (SELECT id_dyscypliny FROM dyscypliny WHERE nazwa_sportu = 'badminton'), (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'parkiet'), TRUE, 35.00, TRUE),
-('Kort Koszykowki', (SELECT id_dyscypliny FROM dyscypliny WHERE nazwa_sportu = 'koszykowka'), (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'twarda'), TRUE, 80.00, FALSE);
+INSERT INTO korty (nazwa, id_nawierzchni, czy_zadaszony, cena_za_godzine, czy_aktywny) VALUES
+('Kort A (Centralny)', (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'maczka'), FALSE, 60.00, TRUE),
+('Kort B (Boczny)', (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'trawa'), FALSE, 50.00, TRUE),
+('Hala Squash 1', (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'parkiet'), TRUE, 45.00, TRUE),
+('Hala Squash 2', (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'parkiet'), TRUE, 45.00, TRUE),
+('Kort Badminton 1', (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'parkiet'), TRUE, 35.00, TRUE),
+('Kort Badminton 2', (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'parkiet'), TRUE, 35.00, TRUE),
+('Kort Koszykowki', (SELECT id_nawierzchni FROM nawierzchnie WHERE nazwa_nawierzchni = 'twarda'), TRUE, 80.00, FALSE);
 
 INSERT INTO rezerwacje (id_uzytkownika, id_kortu, data_rozpoczecia, data_zakonczenia, status_rezerwacji, cena_calkowita, data_utworzenia) VALUES
 (1, 1, '2026-06-08 10:00:00', '2026-06-08 12:00:00', 'zakonczona', 120.00, '2026-06-07 18:00:00'),

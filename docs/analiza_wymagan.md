@@ -7,7 +7,7 @@ Celem projektu jest stworzenie struktury relacyjnej bazy danych obsługującej s
 Zgodnie ze strukturą tabeli `role_uzytkownikow`, w systemie przewiduje się następujących aktorów:
 *   **Klient:** Użytkownik końcowy, który przegląda ofertę, dokonuje rezerwacji kortów, opłaca je oraz wystawia opinie po zakończonej grze.
 *   **Pracownik (Obsługa):** Użytkownik zarządzający codziennymi operacjami, takimi jak weryfikacja płatności gotówkowych, nadzorowanie grafiku rezerwacji i pomoc klientom.
-*   **Administrator:** Użytkownik posiadający pełne uprawnienia do zarządzania słownikami (dyscypliny, nawierzchnie), dodawania lub dezaktywowania kortów oraz wglądu we wszystkie statystyki i raporty.
+*   **Administrator:** Użytkownik posiadający pełne uprawnienia do zarządzania słownikami (nawierzchnie), dodawania lub dezaktywowania kortów oraz wglądu we wszystkie statystyki i raporty.
 
 ## 3. Wymagania funkcjonalne
 
@@ -16,9 +16,9 @@ Zgodnie ze strukturą tabeli `role_uzytkownikow`, w systemie przewiduje się nas
 *   Każdy użytkownik musi mieć bezwzględnie przypisaną rolę determinującą jego uprawnienia.
 
 ### 3.2. Zarządzanie infrastrukturą sportową
-*   System musi przechowywać pełne informacje o kortach, w tym: nazwa, przypisana dyscyplina, rodzaj nawierzchni, informacja o zadaszeniu oraz przypisana cena za godzinę.
+*   System musi przechowywać pełne informacje o kortach, w tym: nazwa, rodzaj nawierzchni, informacja o zadaszeniu oraz przypisana cena za godzinę.
 *   Korty mogą być tymczasowo lub trwale wyłączone z użytku (flaga `czy_aktywny`), co powinno natychmiast blokować możliwość ich dalszej rezerwacji.
-*   Słowniki dyscyplin sportowych oraz rodzajów nawierzchni muszą być w pełni rozszerzalne.
+*   Słownik rodzajów nawierzchni musi być w pełni rozszerzalny.
 
 ### 3.3. Obsługa rezerwacji
 *   Użytkownik musi mieć możliwość zarezerwowania kortu określając czas rozpoczęcia i zakończenia.

@@ -11,12 +11,11 @@ Projekt wykorzystuje standardowy, pojedynczy schemat relacyjny do przechowywania
 ### 2.1 Tabele słownikowe
 Te tabele są rzadko modyfikowane i służą do standaryzacji wpisów w głównej bazie. Usunięcie z nich rekordu używanego przez system jest zablokowane kluczem obcym z opcją `ON DELETE RESTRICT`.
 *   `role_uzytkownikow`: Przechowuje kody ról (np. klient, pracownik, admin).
-*   `dyscypliny`: Słownik sportów (np. tenis ziemny, squash, badminton).
 *   `nawierzchnie`: Słownik rodzajów podłoży (np. mączka, trawa sztuczna, parkiet).
 
 ### 2.2 Tabele transakcyjne i główne relacje (1:N, 1:1)
 *   **`uzytkownicy`**: Centralna tabela logowania i kontaktu z przypisanym kluczem obcym (1:N) do `role_uzytkownikow`.
-*   **`korty`**: Obiekty fizyczne udostępniane do rezerwacji. Posiadają powiązania 1:N z `dyscypliny` oraz `nawierzchnie`. Dodatkowo przechowują flagę `czy_aktywny` oraz stawkę bazową `cena_za_godzine`.
+*   **`korty`**: Obiekty fizyczne udostępniane do rezerwacji. Posiadają powiązania 1:N z `nawierzchnie`. Dodatkowo przechowują flagę `czy_aktywny` oraz stawkę bazową `cena_za_godzine`.
 *   **`rezerwacje`**: Kluczowa tabela w systemie. Łączy użytkownika z określonym kortem w danym przedziale czasowym (od-do). 
 *   **`platnosci`**: Tabela rozliczeń w relacji 1:1 (`UNIQUE`) względem rezerwacji. Usunięcie rezerwacji kaskadowo usuwa powiązaną płatność (`ON DELETE CASCADE`).
 *   **`opinie`**: Tabela sprzężeń zwrotnych, również w relacji 1:1 do zrealizowanej rezerwacji (`ON DELETE CASCADE`). 

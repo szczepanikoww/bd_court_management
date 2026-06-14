@@ -6,13 +6,13 @@ Projekt bazy danych dla systemu rezerwacji kortów sportowych, obejmujący zarz�
 
 System umożliwia:
 - Rejestrację i zarządzanie kontami użytkowników (klienci, pracownicy, administratorzy).
-- Ewidencjonowanie kortów sportowych (różne dyscypliny, typy nawierzchni, obiekty kryte/otwarte).
+- Ewidencjonowanie kortów sportowych (typy nawierzchni, obiekty kryte/otwarte).
 - Rezerwowanie kortów w określonych przedziałach czasowych z automatycznym sprawdzaniem kolizji terminów (ochrona przed overbookingiem).
 - Automatyczne wyliczanie całkowitych kosztów rezerwacji na podstawie cennika kortu i czasu wynajmu.
 - Rejestrowanie płatności powiązanych z rezerwacjami z systemem reaktywnej aktualizacji statusu rezerwacji.
 - Zbieranie opinii użytkowników po zrealizowanych rezerwacjach.
 - Systemową ochronę danych historycznych i dowodowych przed modyfikacjami po odbyciu się rezerwacji.
-- Generowanie zaawansowanych raportów i statystyk (wykorzystanie obiektów, przychody, popularność dyscyplin).
+- Generowanie zaawansowanych raportów i statystyk (wykorzystanie obiektów, przychody).
 
 ---
 
@@ -73,4 +73,4 @@ psql -U postgres -d rezerwacje_kortow -f sql/dml/01_seed_data.sql
 1. **Wskaźnik obłożenia (wykorzystania) kortów** - stosunek zarezerwowanych godzin do godzin otwarcia obiektu w danym miesiącu.
 2. **Miesięczne zestawienie przychodów** - podział na zrealizowane płatności oraz płatności oczekujące.
 3. **Najbardziej aktywni klienci** - ranking użytkowników na podstawie liczby rezerwacji i wydanych kwot.
-4. **Popularność nawierzchni i dyscyplin** - statystyka określająca, które rodzaje kortów są najchętniej rezerwowane.
+4. **Popularność nawierzchni** - statystyka określająca, które rodzaje kortów są najchętniej rezerwowane.

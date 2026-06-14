@@ -4,7 +4,6 @@ DROP TABLE IF EXISTS rezerwacje CASCADE;
 DROP TABLE IF EXISTS korty CASCADE;
 DROP TABLE IF EXISTS uzytkownicy CASCADE;
 DROP TABLE IF EXISTS role_uzytkownikow CASCADE;
-DROP TABLE IF EXISTS dyscypliny CASCADE;
 DROP TABLE IF EXISTS nawierzchnie CASCADE;
 
 CREATE TABLE role_uzytkownikow (
@@ -12,12 +11,6 @@ CREATE TABLE role_uzytkownikow (
     kod_roli VARCHAR(20) NOT NULL UNIQUE,
     nazwa_roli VARCHAR(50) NOT NULL,
     opis TEXT
-);
-
-CREATE TABLE dyscypliny (
-    id_dyscypliny SERIAL PRIMARY KEY,
-    nazwa_sportu VARCHAR(50) NOT NULL UNIQUE,
-    opis_sportu TEXT
 );
 
 CREATE TABLE nawierzchnie (
@@ -42,15 +35,12 @@ CREATE TABLE uzytkownicy (
 CREATE TABLE korty (
     id_kortu SERIAL PRIMARY KEY,
     nazwa VARCHAR(100) NOT NULL,
-    id_dyscypliny INTEGER NOT NULL,
     id_nawierzchni INTEGER NOT NULL,
     czy_zadaszony BOOLEAN NOT NULL DEFAULT FALSE,
     cena_za_godzine DECIMAL(10, 2) NOT NULL,
     czy_aktywny BOOLEAN DEFAULT TRUE,
     
     CONSTRAINT chk_cena CHECK (cena_za_godzine > 0),
-    CONSTRAINT fk_korty_dyscyplina FOREIGN KEY (id_dyscypliny) 
-        REFERENCES dyscypliny(id_dyscypliny) ON DELETE RESTRICT,
     CONSTRAINT fk_korty_nawierzchnia FOREIGN KEY (id_nawierzchni) 
         REFERENCES nawierzchnie(id_nawierzchni) ON DELETE RESTRICT
 );

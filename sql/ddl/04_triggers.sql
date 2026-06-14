@@ -59,9 +59,7 @@ AFTER UPDATE ON platnosci
 FOR EACH ROW
 EXECUTE FUNCTION trg_fn_aktualizuj_status_rezerwacji_po_platnosci();
 
--- ==============================================================================
--- TRIGGER: Automatyczne obliczanie ceny całkowitej (cena_calkowita)
--- ==============================================================================
+
 CREATE OR REPLACE FUNCTION trg_fn_oblicz_cene_calkowita()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -83,9 +81,7 @@ BEFORE INSERT OR UPDATE ON rezerwacje
 FOR EACH ROW
 EXECUTE FUNCTION trg_fn_oblicz_cene_calkowita();
 
--- ==============================================================================
--- TRIGGER: Zabezpieczenie danych historycznych
--- ==============================================================================
+
 CREATE OR REPLACE FUNCTION trg_fn_zabezpiecz_historie()
 RETURNS TRIGGER AS $$
 BEGIN

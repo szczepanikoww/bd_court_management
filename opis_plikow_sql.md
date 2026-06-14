@@ -4,8 +4,8 @@ Oto szczegółowe omówienie każdego z plików `.sql` w Twoim projekcie, z podz
 
 *   **[01_tables.sql](file:///D:/STUDIA%20DYSK/6%20sem/projekt_bazy/sql/ddl/01_tables.sql) (Struktura tabel)**
     Jest to absolutny fundament Twojej bazy danych. Plik ten odpowiada za usunięcie starych tabel (jeśli istnieją) i utworzenie ich od nowa. 
-    *   Definiuje słowniki: `role_uzytkownikow`, `dyscypliny` oraz `nawierzchnie`.
-    *   Tworzy główne tabele encji: `uzytkownicy` (zależni od ról) oraz `korty` (zależne od dyscyplin i nawierzchni).
+    *   Definiuje słowniki: `role_uzytkownikow` oraz `nawierzchnie`.
+    *   Tworzy główne tabele encji: `uzytkownicy` (zależni od ról) oraz `korty` (zależne od nawierzchni).
     *   Tworzy tabele operacyjne: `rezerwacje`, `platnosci` oraz `opinie`. 
     *   **Szczegóły techniczne:** Skrypt ten dba o integralność danych, definiując klucze obce (zapobiegając np. usunięciu użytkownika, który ma rezerwacje) oraz tzw. "Check constraints" (np. wymuszając, by `cena_calkowita` była $\ge 0$, oceny mieściły się w skali 1-5, a data zakończenia rezerwacji była zawsze po dacie jej rozpoczęcia). Na końcu zakłada indeksy na kolumny najczęściej używane w zapytaniach (np. daty i identyfikatory w rezerwacjach), co znacznie przyspiesza działanie bazy.
 
@@ -41,7 +41,7 @@ Oto szczegółowe omówienie każdego z plików `.sql` w Twoim projekcie, z podz
 ### Queries (Analiza i Operacje)
 
 *   **[reports.sql](file:///D:/STUDIA%20DYSK/6%20sem/projekt_bazy/sql/queries/reports.sql) (Raportowanie)**
-    Przykłady gotowych, skomplikowanych zapytań `SELECT`, które zarząd kompleksu sportowego chciałby widzieć w panelu administratora. Zapytania te intensywnie korzystają z widoków zbudowanych w `02_views.sql`. Wyliczają np. procentowy współczynnik wykorzystania danego kortu, przychody generowane przez konkretne sporty, generują ładnie sformatowane agregacje opinii i komentarzy dla poszczególnych obiektów, czy też budują ranking najlepszych klientów na podstawie pozostawionych pieniędzy przy użyciu funkcji rankingowej `DENSE_RANK()`.
+    Przykłady gotowych, skomplikowanych zapytań `SELECT`, które zarząd kompleksu sportowego chciałby widzieć w panelu administratora. Zapytania te intensywnie korzystają z widoków zbudowanych w `02_views.sql`. Wyliczają np. procentowy współczynnik wykorzystania danego kortu, przychody generowane dla konkretnych obiektów, generują ładnie sformatowane agregacje opinii i komentarzy dla poszczególnych obiektów, czy też budują ranking najlepszych klientów na podstawie pozostawionych pieniędzy przy użyciu funkcji rankingowej `DENSE_RANK()`.
 
 *   **[transactions.sql](file:///D:/STUDIA%20DYSK/6%20sem/projekt_bazy/sql/queries/transactions.sql) (Demonstracja izolacji transakcji)**
     Plik ten jest techniczną demonstracją pokazującą świadomość tego, jak działa współbieżność bazodanowa. 

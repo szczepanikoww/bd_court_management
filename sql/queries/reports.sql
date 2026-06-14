@@ -1,7 +1,6 @@
 SELECT 
     id_kortu,
     nazwa,
-    typ_sportu,
     liczba_rezerwacji,
     suma_godzin AS zarezerwowane_godziny,
     420.0 AS pojemnosc_godzinowa_miesiaca,
@@ -20,15 +19,16 @@ FROM v_przychody_miesieczne
 ORDER BY rok DESC, miesiac DESC;
 
 SELECT 
-    k.typ_sportu,
+    n.nazwa_nawierzchni AS typ_nawierzchni,
     COUNT(r.id_rezerwacji) AS liczba_rezerwacji,
     SUM(p.kwota) AS total_przychod_pln,
     ROUND(AVG(k.cena_za_godzine), 2) AS avg_cena_h_pln
 FROM korty k
+JOIN nawierzchnie n ON k.id_nawierzchni = n.id_nawierzchni
 JOIN rezerwacje r ON k.id_kortu = r.id_kortu
 JOIN platnosci p ON r.id_rezerwacji = p.id_rezerwacji
 WHERE p.status_platnosci = 'zrealizowana'
-GROUP BY k.typ_sportu
+GROUP BY n.nazwa_nawierzchni
 ORDER BY total_przychod_pln DESC;
 
 SELECT 
@@ -45,14 +45,15 @@ ORDER BY wydano_lacznie_pln DESC;
 
 SELECT 
     k.nazwa AS nazwa_kortu,
-    k.typ_sportu,
+    n.nazwa_nawierzchni AS typ_nawierzchni,
     COUNT(o.id_opinii) AS liczba_opinii,
     ROUND(AVG(o.ocena), 2) AS srednia_ocena,
     STRING_AGG(o.komentarz, ' | ' ORDER BY o.data_dodania DESC) AS zebrane_opinie
 FROM korty k
+JOIN nawierzchnie n ON k.id_nawierzchni = n.id_nawierzchni
 LEFT JOIN rezerwacje r ON k.id_kortu = r.id_kortu
 LEFT JOIN opinie o ON r.id_rezerwacji = o.id_rezerwacji
-GROUP BY k.id_kortu, k.nazwa, k.typ_sportu
+GROUP BY k.id_kortu, k.nazwa, n.nazwa_nawierzchni
 ORDER BY srednia_ocena DESC NULLS LAST;
 
 SELECT 

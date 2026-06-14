@@ -19,12 +19,12 @@ GRANT USAGE ON SCHEMA public TO rola_klient;
 GRANT USAGE ON SCHEMA public TO rola_pracownik;
 GRANT ALL PRIVILEGES ON SCHEMA public TO rola_admin;
 
-GRANT SELECT ON korty, dyscypliny, nawierzchnie, opinie TO rola_klient;
+GRANT SELECT ON korty, nawierzchnie, opinie TO rola_klient;
 GRANT SELECT, INSERT, UPDATE ON rezerwacje, platnosci TO rola_klient;
 GRANT INSERT ON opinie TO rola_klient;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO rola_klient;
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON uzytkownicy, korty, rezerwacje, platnosci, opinie, dyscypliny, nawierzchnie TO rola_pracownik;
+GRANT SELECT, INSERT, UPDATE, DELETE ON uzytkownicy, korty, rezerwacje, platnosci, opinie, nawierzchnie TO rola_pracownik;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO rola_pracownik;
 
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO rola_admin;

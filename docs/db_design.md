@@ -21,7 +21,6 @@ Schemat bazy danych został zaprojektowany zgodnie z zasadami **Trzeciej Postaci
 *   **2NF**: Została spełniona, ponieważ baza nie posiada kluczy głównych złożonych z wielu kolumn, więc nie występuje problem częściowej zależności atrybutów niekluczowych od klucza. Wszystkie kolumny niekluczowe zależą od całego klucza głównego.
 *   **3NF**: Żaden atrybut niekluczowy nie jest zależny od innego atrybutu niekluczowego (brak zależności przechodnich). W tym celu wydzielono tabele słownikowe:
     *   `role_uzytkownikow` – zapobiega redundancji opisów ról w tabeli `uzytkownicy`.
-    *   `dyscypliny` – eliminuje powtarzanie opisów sportów w rekordach kortów.
     *   `nawierzchnie` – grupuje cechy nawierzchni (np. konieczność obuwia halowego) w osobnym słowniku, eliminując redundancję w tabeli `korty`.
 
 ---
@@ -35,7 +34,6 @@ Struktura opiera się na 8 powiązanych relacyjnie tabelach, wykorzystujących w
 ```mermaid
 erDiagram
     ROLE_UZYTKOWNIKOW ||--o{ UZYTKOWNICY : "definiuje"
-    DYSCYPLINY ||--o{ KORTY : "okresla"
     NAWIERZCHNIE ||--o{ KORTY : "pokrywa"
     UZYTKOWNICY ||--o{ REZERWACJE : "dokonuje"
     KORTY ||--o{ REZERWACJE : "dotyczy"
@@ -43,17 +41,6 @@ erDiagram
     REZERWACJE ||--o| OPINIE : "otrzymuje"
 
     ROLE_UZYTKOWNIKOW {
-        int id_roli PK
-        string kod_roli UK
-        string nazwa_roli
-        string opis
-    }
-
-    DYSCYPLINY {
-        int id_dyscypliny PK
-        string nazwa_sportu UK
-        string opis_sportu
-    }
 
     NAWIERZCHNIE {
         int id_nawierzchni PK
@@ -74,7 +61,6 @@ erDiagram
     KORTY {
         int id_kortu PK
         string nazwa
-        int id_dyscypliny FK
         int id_nawierzchni FK
         boolean czy_zadaszony
         decimal cena_za_godzine
@@ -116,7 +102,7 @@ erDiagram
 
 System jest zbudowany hierarchicznie:
 1.  **Użytkownik** (`uzytkownicy`) ma przypisaną rolę (`role_uzytkownikow`).
-2.  **Kort** (`korty`) ma przypisaną dyscyplinę (`dyscypliny`) oraz nawierzchnię (`nawierzchnie`).
+2.  **Kort** (`korty`) ma przypisaną nawierzchnię (`nawierzchnie`).
 3.  Użytkownicy tworzą **Rezerwacje** (`rezerwacje`) na konkretne korty w określonych przedziałach czasowych.
 4.  Każda rezerwacja generuje rekord **Płatności** (`platnosci`).
 5.  Zakończona rezerwacja może zostać oceniona poprzez **Opinię** (`opinie`).
@@ -131,16 +117,7 @@ Słownik przechowujący role określające uprawnienia użytkowników w systemie
 | `nazwa_roli` | varchar(50) | Wymagane | Pełna nazwa wyświetlana roli. |
 | `opis` | text | Opcjonalne | Opis zakresu uprawnień przypisanych do roli. |
 
-#### 2. dyscypliny (Słownik Sportów)
-Słownik dyscyplin sportowych, do których przypisywane są korty.
-
-| Pole | Typ Danych | Atrybuty | Opis ("Po co to jest?") |
-| :--- | :--- | :--- | :--- |
-| `id_dyscypliny` | serial | K. Główny (PK) | Unikalny identyfikator sportu. |
-| `nazwa_sportu` | varchar(50) | Unikalne, Wymagane | Nazwa dyscypliny (np. 'tenis', 'squash'). |
-| `opis_sportu` | text | Opcjonalne | Krótki opis zasad lub wymagań dyscypliny. |
-
-#### 3. nawierzchnie (Słownik Nawierzchni Boisk)
+#### 2. nawierzchnie (Słownik Nawierzchni Boisk)
 Słownik określający typ nawierzchni na poszczególnych kortach.
 
 | Pole | Typ Danych | Atrybuty | Opis ("Po co to jest?") |
@@ -169,7 +146,6 @@ Ewidencja kortów i boisk dostępnych do wynajęcia.
 | :--- | :--- | :--- | :--- |
 | `id_kortu` | serial | K. Główny (PK) | Unikalny identyfikator obiektu. |
 | `nazwa` | varchar(100) | Wymagane | Nazwa własna kortu (np. "Kort Centralny A"). |
-| `id_dyscypliny` | integer | K. Obcy (FK), Wymagane| Przeznaczenie sportowe kortu. |
 | `id_nawierzchni` | integer | K. Obcy (FK), Wymagane| Rodzaj zastosowanej nawierzchni. |
 | `czy_zadaszony` | boolean | Domyślnie: FALSE | Określa czy kort jest kryty (np. hala, balon). |
 | `cena_za_godzine` | decimal(10,2)| Wymagane, CHECK >0 | Koszt wynajmu kortu za 1 godzinę. |
@@ -233,7 +209,6 @@ SELECT
     u.email AS klient_email,
     k.id_kortu,
     k.nazwa AS nazwa_kortu,
-    d.nazwa_sportu AS typ_sportu,
     n.nazwa_nawierzchni AS typ_nawierzchni,
     r.data_rozpoczecia,
     r.data_zakonczenia,
@@ -248,7 +223,6 @@ SELECT
 FROM rezerwacje r
 JOIN uzytkownicy u ON r.id_uzytkownika = u.id_uzytkownika
 JOIN korty k ON r.id_kortu = k.id_kortu
-JOIN dyscypliny d ON k.id_dyscypliny = d.id_dyscypliny
 JOIN nawierzchnie n ON k.id_nawierzchni = n.id_nawierzchni
 LEFT JOIN platnosci p ON r.id_rezerwacji = p.id_rezerwacji
 LEFT JOIN opinie o ON r.id_rezerwacji = o.id_rezerwacji;
@@ -258,16 +232,14 @@ CREATE OR REPLACE VIEW v_oblozenie_kortow AS
 SELECT 
     k.id_kortu,
     k.nazwa,
-    d.nazwa_sportu AS typ_sportu,
     k.cena_za_godzine,
     COUNT(r.id_rezerwacji) AS liczba_rezerwacji,
     COALESCE(SUM(EXTRACT(EPOCH FROM (r.data_zakonczenia - r.data_rozpoczecia))/3600.0), 0) AS suma_godzin,
     ROUND(AVG(o.ocena), 2) AS srednia_ocena
 FROM korty k
-JOIN dyscypliny d ON k.id_dyscypliny = d.id_dyscypliny
 LEFT JOIN rezerwacje r ON k.id_kortu = r.id_kortu AND r.status_rezerwacji IN ('potwierdzona', 'zakonczona')
 LEFT JOIN opinie o ON r.id_rezerwacji = o.id_rezerwacji
-GROUP BY k.id_kortu, k.nazwa, d.nazwa_sportu, k.cena_za_godzine;
+GROUP BY k.id_kortu, k.nazwa, k.cena_za_godzine;
 ```
 
 ---

@@ -11,7 +11,6 @@ SELECT
     u.email AS klient_email,
     k.id_kortu,
     k.nazwa AS nazwa_kortu,
-    d.nazwa_sportu AS typ_sportu,
     n.nazwa_nawierzchni AS typ_nawierzchni,
     r.data_rozpoczecia,
     r.data_zakonczenia,
@@ -26,7 +25,6 @@ SELECT
 FROM rezerwacje r
 JOIN uzytkownicy u ON r.id_uzytkownika = u.id_uzytkownika
 JOIN korty k ON r.id_kortu = k.id_kortu
-JOIN dyscypliny d ON k.id_dyscypliny = d.id_dyscypliny
 JOIN nawierzchnie n ON k.id_nawierzchni = n.id_nawierzchni
 LEFT JOIN platnosci p ON r.id_rezerwacji = p.id_rezerwacji
 LEFT JOIN opinie o ON r.id_rezerwacji = o.id_rezerwacji;
@@ -35,16 +33,14 @@ CREATE VIEW v_oblozenie_kortow AS
 SELECT 
     k.id_kortu,
     k.nazwa,
-    d.nazwa_sportu AS typ_sportu,
     k.cena_za_godzine,
     COUNT(r.id_rezerwacji) AS liczba_rezerwacji,
     COALESCE(SUM(EXTRACT(EPOCH FROM (r.data_zakonczenia - r.data_rozpoczecia))/3600.0), 0) AS suma_godzin,
     ROUND(AVG(o.ocena), 2) AS srednia_ocena
 FROM korty k
-JOIN dyscypliny d ON k.id_dyscypliny = d.id_dyscypliny
 LEFT JOIN rezerwacje r ON k.id_kortu = r.id_kortu AND r.status_rezerwacji IN ('potwierdzona', 'zakonczona')
 LEFT JOIN opinie o ON r.id_rezerwacji = o.id_rezerwacji
-GROUP BY k.id_kortu, k.nazwa, d.nazwa_sportu, k.cena_za_godzine;
+GROUP BY k.id_kortu, k.nazwa, k.cena_za_godzine;
 
 CREATE VIEW v_przychody_miesieczne AS
 SELECT 

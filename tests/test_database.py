@@ -370,10 +370,9 @@ class TestViews:
             row = cur.fetchone()
             assert row[0] == 'Jan Kowalski'
             assert row[1] == 'Kort A'
-            assert row[2] == 'tenis'
-            assert row[3] == 'maczka'
-            assert row[4] == 'potwierdzona'
-            assert row[5] == 'blik'
+            assert row[2] == 'maczka'
+            assert row[3] == 'potwierdzona'
+            assert row[4] == 'blik'
         conn.rollback()
     def test_v_oblozenie_kortow(self, clean_tables):
         conn = clean_tables
